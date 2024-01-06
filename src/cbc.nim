@@ -16,7 +16,7 @@ type
     isOver: bool
 
 proc initGame(m, n: Positive): Game =
-  result.grid = newSeqWith(m, repeat(Cell(isMine: false, display: '+'), n))
+  result.grid = newSeqWith(m, repeat(Cell(isMine: false, display: '.'), n))
   let min = toInt(float(m * n) * 0.1)
   let max = toInt(float(m * n) * 0.2)
   result.mineCount = min + rand(max - min)
@@ -38,12 +38,12 @@ iterator cells(grid: var Grid): var Cell =
 
 proc display(game: Game; endOfGame: bool) =
   let margin = repeat(' ', lMargin)
-  echo margin, "\x1b[33;2m", toSeq(1..game.grid.len).join "  ", "\x1b[0m"
+  echo margin, "\x1b[32;2m", toSeq(1..game.grid.len).join "  ", "\x1b[0m"
   for y in 0..game.grid[0].high:
     for x in 0..game.grid.high:
       let disp = game.grid[x][y].display
       case disp
-      of '+':
+      of '.':
         stdout.write "\x1b[30;2m", disp, "\x1b[0m  "
       of 'x':
         stdout.write "\x1b[31;1m", disp, "\x1b[0m  "
@@ -102,8 +102,8 @@ proc resign(game: var Game) =
 proc markCell(game: var Game; x, y: int) =
   if game.grid[x, y].display == '?':
     dec game.minesMarked
-    game.grid[x, y].display = '+'
-  elif game.grid[x, y].display == '+':
+    game.grid[x, y].display = '.'
+  elif game.grid[x, y].display == '.':
     inc game.minesMarked
     game.grid[x, y].display = '?'
 
@@ -117,7 +117,7 @@ proc countAdjMines(game: Game; x, y: Natural): int =
 
 proc clearCell(g: var Game; x, y: int): bool =
   if x in 0..g.grid.high and y in 0..g.grid[0].high:
-    if g.grid[x, y].display == '+':
+    if g.grid[x, y].display == '.':
       if g.grid[x, y].isMine:
         g.grid[x][y].display = 'x'
         echo "You lost!"
@@ -136,7 +136,7 @@ proc clearCell(g: var Game; x, y: int): bool =
 proc testForWin(g: var Game): bool =
   if g.minesMarked != g.mineCount: return false
   for c in g.grid.cells:
-    if c.display == '+': return false
+    if c.display == '.': return false
   result = true
   echo "You win!"
 
