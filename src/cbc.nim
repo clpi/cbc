@@ -66,7 +66,7 @@ proc display(game: Game; endOfGame: bool) =
       of '6':
         stdout.write "\x1b[32m", disp, "\x1b[0m  "
       of '?':
-        stdout.write "\x1b[31;1m", disp, "\x1b[0m  "
+        stdout.write "\x1b[32;1m", disp, "\x1b[0m  "
       else:
         stdout.write margin, "\x1b[33;2m", game.grid[x][y].display, "\x1b[0m  "
     stdout.write margin, "\x1b[32;2m", $(y + 1), "\x1b[0m  "
