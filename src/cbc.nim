@@ -1,7 +1,9 @@
 # This is just an example to get you started. A typical binary package
 # uses this file as the main entry point of the application.
 
-import random, sequtils, strformat, strscans, strutils
+import tables, algorithm, sets, random, sequtils, strformat, strscans, strutils
+
+const Infinity = 1_000_000_000
 
 const lMargin = 0
 type
@@ -41,34 +43,21 @@ proc display(game: Game; endOfGame: bool) =
   echo margin, "\x1b[32;2m", toSeq(1..game.grid.len).join "  ", "\x1b[0m"
   for y in 0..game.grid[0].high:
     for x in 0..game.grid.high:
-      let disp = game.grid[x][y].display
-      case disp
-      of '.':
-        stdout.write "\x1b[30;2m", disp, "\x1b[0m  "
-      of 'x':
-        stdout.write "\x1b[31;1m", disp, "\x1b[0m  "
-      of 'Y':
-        stdout.write "\x1b[33;1m", disp, "\x1b[0m  "
-      of 'N':
-        stdout.write "\x1b[31;1m", disp, "\x1b[0m  "
-      of ' ':
-        stdout.write "\x1b[37;2m", disp, "\x1b[0m  "
-      of '1':
-        stdout.write "\x1b[34m", disp, "\x1b[0m  "
-      of '2':
-        stdout.write "\x1b[36m", disp, "\x1b[0m  "
-      of '3':
-        stdout.write "\x1b[33m", disp, "\x1b[0m  "
-      of '4':
-        stdout.write "\x1b[31m", disp, "\x1b[0m  "
-      of '5':
-        stdout.write "\x1b[35m", disp, "\x1b[0m  "
-      of '6':
-        stdout.write "\x1b[32m", disp, "\x1b[0m  "
-      of '?':
-        stdout.write "\x1b[32;1m", disp, "\x1b[0m  "
-      else:
-        stdout.write margin, "\x1b[33;2m", game.grid[x][y].display, "\x1b[0m  "
+      let disp = case game.grid[x][y].display
+      of '.': "30;2m."
+      of 'x': "31;1mx" 
+      of 'Y': "33;1mY"
+      of 'N': "31;1mN"
+      of ' ': "0m "
+      of '1': "34m1"
+      of '2': "36m2"
+      of '3': "33m3"
+      of '4': "31m4"
+      of '5': "35m5"
+      of '6': "32m6"
+      of '?': "32;1m?"
+      else: "37;2m"
+      stdout.write "\x1b[", disp, "\x1b[0m  "
     stdout.write margin, "\x1b[32;2m", $(y + 1), "\x1b[0m  "
     stdout.write("\n")
   if not endOfGame:
@@ -172,7 +161,7 @@ when isMainModule:
   var g = initGame(10, 9)
   g.display false
   while not g.isOver:
-    stdout.write "\n\x1b[32;2;1mAction:\x1b[0m\x1b[32m "
+    stdout.write "\n\x1b[32;2;1mAction \x1b[33m→\x1b[0m\x1b[33m  "
     let action = try: stdin.readLine().toLowerAscii
       except EOFError: "q"
     case action[0]
@@ -197,5 +186,7 @@ when isMainModule:
     of 'q':
       g.resign()
     else:
+      printUsage()
+      g.display true
       continue
       
