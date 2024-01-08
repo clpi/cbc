@@ -8,14 +8,51 @@ const Infinity = 1_000_000_000
 const lMargin = 0
 type
   Cell = object
-    isMine: bool
-    display: char
+    x, y: int
+    isMine: bool = false
+    display: char = ' '
   Grid = seq[seq[Cell]]
   Game = object
     grid: Grid
     mineCount: Natural
     minesMarked: Natural
     isOver: bool
+
+func heuristic(cell, goal: Cell): int =
+  max(abs(goal.x - cell.x), abs(goal.y - cell.y))
+
+func reconstructedPath(cameFrom: Table[Cell, Cell]; curr: Cell): seq[Cell] =
+  var c = curr
+  result = @[c]
+  while c in cameFrom:
+    c = cameFrom[c]
+    result.add c
+  result.reverse()
+
+
+# iterator neighbours(cell: Cell): Cell =
+#   for dx in -1..1:
+#     for dy in -1..1:
+#       if dx != 0 or dy != 0:
+#         yield Cell(cell.x + dx, cell.y + dy)
+
+# func search(start, goal: Cell): tuple[path: seq[Cell], cost: int] =
+#   var open = toHashSet [start]
+#   var visited: HashSet[Cell]
+#   var cameFrom: Table[Cell, Cell]
+#   var gScore, fScore: Table[Cell, int]
+#   gscore[start] = 0
+#   fScore[start] = heuristic(start, goal)
+#   while open.len != 0:
+#     var curr: Cell
+#     var minScore = Infinity
+#     for c in open:
+      # let sc = fScore.getOrDefault(cell, Infinity)
+      # if sc < minScore:
+      #   curr = c
+      #   minScore = sc
+    # if curr == goal:
+    #   return (cameFrom.reconstructedPath curr, fScore[goal])
 
 proc initGame(m, n: Positive): Game =
   result.grid = newSeqWith(m, repeat(Cell(isMine: false, display: '.'), n))

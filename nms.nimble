@@ -2,10 +2,10 @@
 
 version       = "0.1.0"
 author        = "Chris Pecunies"
-description   = "A new awesome nimble package"
+description   = "Minesweeper in nim with fancy colors"
 license       = "MIT"
 srcDir        = "src"
-bin           = @["cbc"]
+bin           = @["nms"]
 
 
 # Dependencies
